@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id")->constrained("users");
-            $table->integer("account_no");
-            $table->string("title");
+            $table->integer("account_no")->unique();
+            $table->string("currency");
             $table->decimal("balance", 10)->default(0);
             $table->timestamps();
             $table->softDeletes();
