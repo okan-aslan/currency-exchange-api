@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponses;
 use Exception;
@@ -25,7 +26,7 @@ class AuthController extends Controller
             $token = $user->createToken('token')->plainTextToken;
 
             return $this->success([
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $token
             ], 'User registered successfully');
         } catch (Exception $e) {
@@ -47,7 +48,7 @@ class AuthController extends Controller
             $token = $user->createToken('token')->plainTextToken;
 
             return $this->success([
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $token,
             ], 'User logged in successfully.');
         } catch (\Exception $e) {
@@ -58,7 +59,7 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         try {
-            return $this->success($request->user(), 'User profile retrieved successfully');
+            return $this->success(new UserResource($request->user()), 'User profile retrieved successfully');
         } catch (Exception $e) {
             return $this->error(null, 'Failed to retrieve profile: ' . $e->getMessage(), 500);
         }
