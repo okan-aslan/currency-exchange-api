@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -18,8 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/', [AccountController::class, 'deleteAccount']);
         Route::get('/show', [AccountController::class, 'showAccount']);
         Route::get('/convert', [AccountController::class, 'getAccountValue']);
-        Route::post('/deposit', [AccountController::class, 'deposit']);
-        Route::post('/withdraw', [AccountController::class, 'withdraw']);
+        Route::post('/deposit', [TransactionController::class, 'deposit']);
+        Route::post('/withdraw', [TransactionController::class, 'withdraw']);
     });
 });
 
