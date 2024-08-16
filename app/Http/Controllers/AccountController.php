@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountTransactionRequest;
+use App\Http\Requests\ConvertCurrencyRequest;
+use App\Http\Requests\CreateAccountRequest;
+use App\Http\Requests\DeleteAccountRequest;
+use App\Http\Requests\GetAccountValueRequest;
 use App\Http\Resources\AccountResource;
-use App\Rules\ValidCurrency;
 use App\Services\ExchangeRateService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\JsonResponse;
@@ -20,15 +24,9 @@ class AccountController extends Controller
         $this->exchangeRateService = $exchangeRateService;
     }
 
-    public function convertCurrency(Request $request)
+    public function convertCurrency(ConvertCurrencyRequest $request)
     {
         try {
-            $request->validate([
-                'base_currency' => ['required', 'string', 'size:3', new ValidCurrency($this->exchangeRateService)],
-                'target_currency' => ['required', 'string', 'size:3', new ValidCurrency($this->exchangeRateService)],
-                'amount' => ['required', 'numeric', 'min:0.01'],
-            ]);
-
             $baseCurrency = $request->input('base_currency');
             $targetCurrency = $request->input('target_currency');
             $amount = $request->input('amount');
@@ -54,13 +52,9 @@ class AccountController extends Controller
         }
     }
 
-    public function createAccount(Request $request): JsonResponse
+    public function createAccount(CreateAccountRequest $request): JsonResponse
     {
         try {
-            $request->validate([
-                'currency' => ['required', 'string', 'size:3', new ValidCurrency($this->exchangeRateService)],
-            ]);
-
             $user = $request->user();
             $currency = $request->input('currency');
 
@@ -106,14 +100,9 @@ class AccountController extends Controller
         }
     }
 
-    public function getAccountValue(Request $request): JsonResponse
+    public function getAccountValue(GetAccountValueRequest $request): JsonResponse
     {
         try {
-            $request->validate([
-                'account_no' => ['required', 'string', 'exists:accounts,account_no'],
-                'target_currency' => ['required', 'string', 'max:3', new ValidCurrency($this->exchangeRateService)]
-            ]);
-
             $account = $request->user()->accounts()->where('account_no', $request->input('account_no'))->firstOrFail();
 
             if ($account->balance == 0) {
@@ -145,15 +134,10 @@ class AccountController extends Controller
         }
     }
 
-    public function deposit(Request $request): JsonResponse
+    public function deposit(AccountTransactionRequest $request): JsonResponse
     {
         try {
-            $request->validate([
-                'account_no' => ['required', 'string', 'exists:accounts,account_no'],
-                "amount" => ["required", "numeric", "min:0.01"]
-            ]);
-
-            $account = $request->user()->accounts()->where("account_no", $request->input(['account_no']))->firstOrFail();
+            $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
 
             $account->balance += $request->input('amount');
             $account->save();
@@ -168,15 +152,10 @@ class AccountController extends Controller
         }
     }
 
-    public function withdraw(Request $request): JsonResponse
+    public function withdraw(AccountTransactionRequest $request): JsonResponse
     {
         try {
-            $request->validate([
-                'account_no' => ['required', 'string', 'exists:accounts,account_no'],
-                "amount" => ["required", "numeric", "min:0.01"]
-            ]);
-
-            $account = $request->user()->accounts()->where("account_no", $request->input(['account_no']))->firstOrFail();
+            $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
 
             if ($account->balance < $request->input('amount')) {
                 return response()->json(['message' => 'Yetersiz bakiye.'], 400);
@@ -195,12 +174,12 @@ class AccountController extends Controller
         }
     }
 
-    public function deleteAccount(Request $request): JsonResponse
+    public function deleteAccount(DeleteAccountRequest $request): JsonResponse
     {
         try {
-            $request->validate(['required', 'string', 'exists:accounts,account_no']);
+            $accountNo = $request->input('account_no');
 
-            $account = $request->user()->accounts()->where('account_no', $request->input(['account_no']))->firstOrFail();
+            $account = $request->user()->accounts()->where('account_no', $accountNo)->firstOrFail();
 
             $account->delete();
 
