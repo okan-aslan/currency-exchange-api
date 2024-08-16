@@ -34,12 +34,26 @@ class ExchangeRateService
 
         $response = Http::get($url);
 
-
         if ($response->successful()) {
             $rate = $response->json()['conversion_rate'];
             return $amount * $rate;
         }
 
         return null;
+    }
+
+    public function getSupportedCurrencies(): array
+    {
+        $response = Http::get($this->baseUrl . $this->apiKey . '/codes');
+
+        if ($response->successful()) {
+
+            $data = $response->json();
+            if ($data['result'] === 'success') {
+                return array_column($data['supported_codes'], 0);
+            }
+        }
+
+        return [];
     }
 }
