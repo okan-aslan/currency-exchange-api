@@ -134,46 +134,6 @@ class AccountController extends Controller
         }
     }
 
-    public function deposit(AccountTransactionRequest $request): JsonResponse
-    {
-        try {
-            $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
-
-            $account->balance += $request->input('amount');
-            $account->save();
-
-            return $this->success(
-                ["account" => new AccountResource($account)],
-                "Para başarıyla yatırıldı.",
-                200
-            );
-        } catch (\Exception $e) {
-            return $this->error(null, $e->getMessage(), 500);
-        }
-    }
-
-    public function withdraw(AccountTransactionRequest $request): JsonResponse
-    {
-        try {
-            $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
-
-            if ($account->balance < $request->input('amount')) {
-                return response()->json(['message' => 'Yetersiz bakiye.'], 400);
-            }
-
-            $account->balance -= $request->input('amount');
-            $account->save();
-
-            return $this->success(
-                ["account" => new AccountResource($account)],
-                "Para başarıyla çekildi.",
-                200
-            );
-        } catch (\Exception $e) {
-            return $this->error(null, $e->getMessage(), 500);
-        }
-    }
-
     public function deleteAccount(DeleteAccountRequest $request): JsonResponse
     {
         try {
