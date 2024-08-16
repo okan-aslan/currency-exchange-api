@@ -12,11 +12,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('profile/logout', [AuthController::class, 'logout']);
     Route::post('profile/delete', [AuthController::class, 'destroy']);
 
-    Route::get('accounts', [AccountController::class, 'getAllAccounts']);
-    Route::post('accounts', [AccountController::class, 'createAccount']);
-    Route::get('/accounts/{accountNo}/convert/{targetCurrency}', [AccountController::class, 'getAccountValue']);
-    Route::post('accounts/{accountNo}/deposit', [AccountController::class, 'deposit']);
-    Route::post('accounts/{accountNo}/withdraw', [AccountController::class, 'withdraw']);
-    Route::get('accounts/{accountNo}', [AccountController::class, 'showAccount']);
-    Route::delete('accounts/{accountNo}', [AccountController::class, 'deleteAccount']);
+    Route::prefix('accounts')->group(function () {
+        Route::get('/', [AccountController::class, 'getAllAccounts']);
+        Route::post('/', [AccountController::class, 'createAccount']);
+        Route::delete('/', [AccountController::class, 'deleteAccount']);
+        Route::get('/show', [AccountController::class, 'showAccount']);
+        Route::get('/convert', [AccountController::class, 'getAccountValue']);
+        Route::post('/deposit', [AccountController::class, 'deposit']);
+        Route::post('/withdraw', [AccountController::class, 'withdraw']);
+    });
 });
+
+Route::post('currency/convert', [AccountController::class, 'convertCurrency']);
