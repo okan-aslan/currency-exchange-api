@@ -12,11 +12,22 @@ class ConvertCurrencyController extends Controller
 
     protected $exchangeRateService;
 
+    /**
+     * ConvertCurrencyController constructor.
+     *
+     * @param ExchangeRateService $exchangeRateService
+     */
     public function __construct(ExchangeRateService $exchangeRateService)
     {
         $this->exchangeRateService = $exchangeRateService;
     }
 
+    /**
+     * Convert the specified amount from one currency to another.
+     *
+     * @param ConvertCurrencyRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function convertCurrency(ConvertCurrencyRequest $request)
     {
         try {

@@ -17,11 +17,22 @@ class AccountController extends Controller
 
     protected $exchangeRateService;
 
+    /**
+     * AccountController constructor.
+     *
+     * @param ExchangeRateService $exchangeRateService
+     */
     public function __construct(ExchangeRateService $exchangeRateService)
     {
         $this->exchangeRateService = $exchangeRateService;
     }
 
+    /**
+     * Create a new account for the authenticated user.
+     *
+     * @param CreateAccountRequest $request
+     * @return JsonResponse
+     */
     public function createAccount(CreateAccountRequest $request): JsonResponse
     {
         try {
@@ -42,6 +53,12 @@ class AccountController extends Controller
         }
     }
 
+    /**
+     * Get all accounts of the authenticated user.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getAllAccounts(Request $request): JsonResponse
     {
         try {
@@ -55,6 +72,12 @@ class AccountController extends Controller
         }
     }
 
+    /**
+     * Show a specific account of the authenticated user.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function showAccount(Request $request): JsonResponse
     {
         try {
@@ -70,6 +93,12 @@ class AccountController extends Controller
         }
     }
 
+    /**
+     * Convert the balance of an account to a different currency.
+     *
+     * @param GetAccountValueRequest $request
+     * @return JsonResponse
+     */
     public function getAccountValue(GetAccountValueRequest $request): JsonResponse
     {
         try {
@@ -104,6 +133,12 @@ class AccountController extends Controller
         }
     }
 
+    /**
+     * Delete a specific account of the authenticated user.
+     *
+     * @param DeleteAccountRequest $request
+     * @return JsonResponse
+     */
     public function deleteAccount(DeleteAccountRequest $request): JsonResponse
     {
         try {

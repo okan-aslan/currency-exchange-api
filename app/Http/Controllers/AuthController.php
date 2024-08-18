@@ -15,6 +15,12 @@ class AuthController extends Controller
 {
     use ApiResponses;
 
+    /**
+     * Register a new user.
+     *
+     * @param RegisterUserRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(RegisterUserRequest $request)
     {
         try {
@@ -34,6 +40,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Authenticate a user and issue a token.
+     *
+     * @param LoginUserRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(LoginUserRequest $request)
     {
         try {
@@ -56,6 +68,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Get the authenticated user's profile.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function profile(Request $request)
     {
         try {
@@ -65,6 +83,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Logout the authenticated user by revoking all tokens.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logout(Request $request)
     {
         try {
@@ -75,6 +99,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Delete the authenticated user's account and revoke all tokens.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(Request $request)
     {
         try {

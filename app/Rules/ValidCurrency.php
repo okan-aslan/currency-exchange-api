@@ -10,6 +10,11 @@ class ValidCurrency implements ValidationRule
 {
     protected $supportedCurrencies;
 
+    /**
+     * ValidCurrency constructor.
+     *
+     * @param ExchangeRateService $exchangeRateService
+     */
     public function __construct(ExchangeRateService $exchangeRateService)
     {
         $this->supportedCurrencies = $exchangeRateService->getSupportedCurrencies();

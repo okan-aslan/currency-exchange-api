@@ -9,7 +9,12 @@ use Illuminate\Foundation\Http\FormRequest;
 class ConvertCurrencyRequest extends FormRequest
 {
     protected $exchangeRateService;
-
+    
+    /**
+     * ConvertCurrencyRequest constructor.
+     *
+     * @param ExchangeRateService $exchangeRateService
+     */
     public function __construct(ExchangeRateService $exchangeRateService)
     {
         $this->exchangeRateService = $exchangeRateService;

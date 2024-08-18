@@ -10,6 +10,11 @@ class CreateAccountRequest extends FormRequest
 {
     protected $exchangeRateService;
 
+    /**
+     * CreateAccountRequest constructor.
+     *
+     * @param ExchangeRateService $exchangeRateService
+     */
     public function __construct(ExchangeRateService $exchangeRateService)
     {
         $this->exchangeRateService = $exchangeRateService;

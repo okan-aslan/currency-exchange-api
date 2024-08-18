@@ -16,6 +16,12 @@ class TransactionController extends Controller
 {
     use ApiResponses;
 
+    /**
+     * Deposit a specified amount into the user's account.
+     *
+     * @param AccountTransactionRequest $request
+     * @return JsonResponse
+     */
     public function deposit(AccountTransactionRequest $request): JsonResponse
     {
         try {
@@ -35,6 +41,12 @@ class TransactionController extends Controller
         }
     }
 
+    /**
+     * Withdraw a specified amount from the user's account.
+     *
+     * @param AccountTransactionRequest $request
+     * @return JsonResponse
+     */
     public function withdraw(AccountTransactionRequest $request): JsonResponse
     {
         try {
@@ -54,6 +66,12 @@ class TransactionController extends Controller
         }
     }
 
+    /**
+     * Transfer a specified amount from one account to another.
+     *
+     * @param TransferTransactionRequest $request
+     * @return JsonResponse
+     */
     public function transfer(TransferTransactionRequest $request): JsonResponse
     {
         try {

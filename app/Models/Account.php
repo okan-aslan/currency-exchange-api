@@ -25,7 +25,12 @@ class Account extends Model
         });
     }
 
-    private static function generateUniqueAccountNo()
+    /**
+     * Generate a unique account number.
+     *
+     * @return string
+     */
+    private static function generateUniqueAccountNo(): string
     {
         do {
             $accountNo = Str::upper(Str::random(12));
@@ -64,12 +69,26 @@ class Account extends Model
         return $this->hasMany(Transaction::class, 'target_account_id');
     }
 
+    /**
+     * Deposit an amount into the Account.
+     *
+     * @param float $amount
+     * @return void
+     * @throws \Exception
+     */
     public function deposit(float $amount): void
     {
         $this->balance += $amount;
         $this->save();
     }
 
+    /**
+     * Withdraw an amount from the Account.
+     *
+     * @param float $amount
+     * @return void
+     * @throws \Exception
+     */
     public function withdraw(float $amount): void
     {
         if ($this->balance < $amount) {
@@ -80,6 +99,14 @@ class Account extends Model
         $this->save();
     }
 
+    /**
+     * Transfer an amount to a target Account.
+     *
+     * @param \App\Models\Account $targetAccount
+     * @param float $amount
+     * @return void
+     * @throws \Exception
+     */
     public function transferTo(Account $targetAccount, float $amount): void
     {
         if ($this->balance < $amount) {
