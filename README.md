@@ -96,3 +96,5 @@ curl -X POST http://localhost:3000/api/convert \
     "convertedAmount": 84
 }
 ```
+
+![Screenshot 2024-08-18 at 7 31 23 PM](https://github.com/user-attachments/assets/f3dd368c-0950-47d2-b92b-7ba27a134520)
