@@ -43,4 +43,15 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function recordTransaction(int $userId, int $accountId, string $type, float $amount, int $targetAccountId = null): void
+    {
+        self::create([
+            'user_id' => $userId,
+            'account_id' => $accountId,
+            'type' => $type,
+            'amount' => $amount,
+            'target_account_id' => $targetAccountId,
+        ]);
+    }
 }

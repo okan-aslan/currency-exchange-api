@@ -21,14 +21,9 @@ class TransactionController extends Controller
         try {
             $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
 
-            $account->balance += $request->input('amount');
-            $account->save();
+            $account->deposit($request->input('amount'));
 
-            $request->user()->transactions()->create([
-                'account_id' => $account->id,
-                'type' => 'deposit',
-                'amount' => $request->input('amount'),
-            ]);
+            Transaction::recordTransaction($request->user()->id, $account->id, 'deposit', $request->input('amount'));
 
             return $this->success(
                 ["account" => new AccountResource($account)],
@@ -45,18 +40,9 @@ class TransactionController extends Controller
         try {
             $account = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
 
-            if ($account->balance < $request->input('amount')) {
-                return response()->json(['message' => 'Yetersiz bakiye.'], 400);
-            }
+            $account->withdraw($request->input('amount'));
 
-            $account->balance -= $request->input('amount');
-            $account->save();
-
-            $request->user()->transactions()->create([
-                'account_id' => $account->id,
-                'type' => 'withdraw',
-                'amount' => $request->input('amount'),
-            ]);
+            Transaction::recordTransaction($request->user()->id, $account->id, 'withdraw', $request->input('amount'));
 
             return $this->success(
                 ["account" => new AccountResource($account)],
@@ -71,44 +57,18 @@ class TransactionController extends Controller
     public function transfer(TransferTransactionRequest $request): JsonResponse
     {
         try {
-            DB::beginTransaction();
-
             $sourceAccount = $request->user()->accounts()->where("account_no", $request->input('account_no'))->firstOrFail();
             $targetAccount = Account::where('account_no', $request->input('target_account_no'))->firstOrFail();
-            $amount = $request->input('amount');
 
-            if ($sourceAccount->balance < $amount) {
-                return $this->error(null, "Yetersiz bakiye.", 400);
-            }
+            $sourceAccount->transferTo($targetAccount, $request->input('amount'));
 
-            if ($sourceAccount->currency !== $targetAccount->currency) {
-                return $this->error(null, "Para birimleri uyumsuz.", 400);
-            }
-
-            if ($sourceAccount->user_id === $targetAccount->user_id) {
-                return $this->error(null, "Kendinize transfer yapamazsınız.", 400);
-            }
-
-            $updatedRows = DB::update('UPDATE accounts SET balance = balance - ? WHERE id = ?', [$amount, $sourceAccount->id]);
-
-            if ($updatedRows === 0) {
-                return $this->error(null, "Kaynak hesap güncellenemedi.", 400);
-            }
-
-            $updatedRows = DB::update('UPDATE accounts SET balance = balance + ? WHERE id = ?', [$amount, $targetAccount->id]);
-
-            if ($updatedRows === 0) {
-                return $this->error(null, "Hedef hesap güncellenemedi.", 400);
-            }
-
-            $request->user()->transactions()->create([
-                'account_id' => $sourceAccount->id,
-                'type' => 'transfer',
-                'amount' => $amount,
-                'target_account_id' => $targetAccount->id,
-            ]);
-
-            DB::commit();
+            Transaction::recordTransaction(
+                $request->user()->id,
+                $sourceAccount->id,
+                'transfer',
+                $request->input('amount'),
+                $targetAccount->id
+            );
 
             return $this->success(
                 new AccountResource($sourceAccount),
@@ -116,8 +76,6 @@ class TransactionController extends Controller
                 201
             );
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return $this->error(null, $e->getMessage(), 500);
         }
     }
