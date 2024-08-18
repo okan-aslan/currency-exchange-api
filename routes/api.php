@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConvertCurrencyController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/convert', [AccountController::class, 'getAccountValue']);
         Route::post('/deposit', [TransactionController::class, 'deposit']);
         Route::post('/withdraw', [TransactionController::class, 'withdraw']);
+        Route::post('/transfer', [TransactionController::class, 'transfer']);
     });
 });
 
-Route::post('currency/convert', [AccountController::class, 'convertCurrency']);
+Route::post('currency/convert', [ConvertCurrencyController::class, 'convertCurrency']);
