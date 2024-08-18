@@ -12,7 +12,7 @@ class Transaction extends Model
     use HasFactory, SoftDeletes;
 
 
-    protected $fillable = ['amount', 'type'];
+    protected $fillable = ['account_id', 'user_id', 'target_account_id', 'amount', 'type'];
 
     /**
      * Get the user that performs the transaction
@@ -43,5 +43,4 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }
