@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->constrained('accounts');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('target_account_id')->constrained('users');
+            $table->foreignId('target_account_id')->nullable()->constrained('accounts');
             $table->decimal('amount', 15);
             $table->enum('type', ['deposit', 'withdraw', 'transfer']);
             $table->timestamps();
